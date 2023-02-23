@@ -19,6 +19,7 @@ public class ChattingServer {
     ExecutorService executorService;
     ServerSocket serverSocket;
     List<Client> connections = new Vector<Client>();
+    List<String> nicknameStorage = new Vector<String>();
     void startServer() {
         executorService = Executors.newFixedThreadPool(
                 Runtime.getRuntime().availableProcessors()
@@ -47,7 +48,6 @@ public class ChattingServer {
 
 
                         Client client = new Client(socket);
-                        connections.add(client);
 
                     } catch (Exception e) {
                         System.out.println("ChattingServer의 startServer에서 문제 발생!!");
@@ -83,7 +83,7 @@ public class ChattingServer {
                     try {
                         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         out = socket.getOutputStream();
-                        while (true) {
+                        while (in != null) {
                             String data = in.readLine();
                             System.out.println(data);
                             StringTokenizer st = new StringTokenizer(data, "|");
@@ -92,9 +92,11 @@ public class ChattingServer {
                             switch (protocol) {
                                 case Protocol.LOGINREQUEST:
                                     nickname = st.nextToken();
+                                    connections.add(Client.this);
                                     sendTo(Protocol.LOGINACCEPT + "|" + "닉네임이 성공적으로 생성되었습니다!!");
                                     sendAll(Protocol.CONNECTION + "|" + nickname + "님이 입장하셨습니다.");
                                     sendAll(Protocol.CONNECTION + "|" + "현재 인원은 " + connections.size() + "명입니다.");
+
                                     break;
                                 case Protocol.MESSAGE:
                                     message = st.nextToken();
@@ -116,35 +118,23 @@ public class ChattingServer {
         }
 
         void sendTo(String message) {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        out.write((message + "\n").getBytes());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println("ChattingServer의 Client의 sendTo에서 문제 발생!!");
-                    }
-                }
-            };
-            executorService.submit(runnable);
+            try {
+                out.write((message + "\n").getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("ChattingServer의 Client의 sendTo에서 문제 발생!!");
+            }
         }
 
         void sendAll(String message) {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        for (Client client: connections) {
-                            client.sendTo(message);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println("ChattingServer의 Client의 sendAll에서 문제 발생!!");
-                    }
+            try {
+                for (Client client: connections) {
+                    client.sendTo(message);
                 }
-            };
-            executorService.submit(runnable);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("ChattingServer의 Client의 sendAll에서 문제 발생!!");
+            }
         }
     }
 

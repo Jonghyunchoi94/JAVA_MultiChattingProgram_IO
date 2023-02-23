@@ -14,16 +14,14 @@ class ClientReceiver extends Thread {
         this.nickname = nickname;
         this.filePath = filePath;
         this.in = in;
-        System.out.println("받는 중");
     }
     @Override
     public void run() {
-        while (true) {
+        while (in != null) {
             try {
                 String data = in.readLine();
                 StringTokenizer st = new StringTokenizer(data, "|");
                 int protocol = Integer.parseInt(st.nextToken());
-                System.out.println(protocol);
 
                 switch (protocol) {
                     case Protocol.LOGINACCEPT:

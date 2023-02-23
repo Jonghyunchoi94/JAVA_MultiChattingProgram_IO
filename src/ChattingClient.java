@@ -47,7 +47,6 @@ public class ChattingClient {
                     Thread clientReceiver = new ClientReceiver(socket, nickname, filePath, in);
                     Thread clientSender = new ClientSender(socket, nickname, out);
 
-                    System.out.println("주고받기 시작!!");
                     clientReceiver.start();
                     clientSender.start();
 
