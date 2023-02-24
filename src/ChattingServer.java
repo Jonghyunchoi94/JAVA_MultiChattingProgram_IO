@@ -103,6 +103,9 @@ public class ChattingServer {
                                     sendAll(Protocol.MESSAGE + "|" + messageNickname + "|" + message);
                                     break;
                                 case Protocol.FILE:
+                                    String fileName = st.nextToken();
+                                    String fileContent = st.nextToken();
+                                    sendAll(Protocol.FILE + "|" + fileName + "|" + fileContent);
                                     break;
                             }
                         }
@@ -117,7 +120,7 @@ public class ChattingServer {
             executorService.submit(runnable);
         }
 
-        void sendTo(String message) {
+        synchronized void sendTo(String message) {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -132,7 +135,7 @@ public class ChattingServer {
             executorService.submit(runnable);
         }
 
-        void sendAll(String message) {
+        synchronized void sendAll(String message) {
             try {
                 for (Client client: connections) {
                     client.sendTo(message);
