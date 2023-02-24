@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -21,19 +22,20 @@ class ClientSender extends Thread {
             Scanner scanner = new Scanner(System.in);
             try {
                 String message = scanner.nextLine();
-//                String[] messageSplit = message.split("\\.");
-//                String extension = messageSplit[messageSplit.length - 1].toLowerCase();
-//
-//                if (FileExtension.EXTENSION.contains(extension)) {
-//                    File file = new File(message);
-//
-//                    if (file.exists() && file.isFile()) {
-//                        out.write((Protocol.FILE + "|" + nickname + "|" + message + "\n").getBytes());
-//                    }
-//
-//                }
+                String[] messageSplit = message.split("\\.");
+                String extension = messageSplit[messageSplit.length - 1].toLowerCase();
 
-                out.write((Protocol.MESSAGE + "|" + nickname + "|" + message + "\n").getBytes());
+                if (FileExtension.EXTENSION.contains(extension)) {
+                    File file = new File(message);
+
+                    if (file.exists() && file.isFile()) {
+                        fileReadAndWrite(file);
+                    }
+
+                } else {
+                    out.write((Protocol.MESSAGE + "|" + nickname + "|" + message + "\n").getBytes());
+                }
+
             } catch (Exception e) {
                 try {
                     System.out.println("ClientSender에서 문제 발생!!");
@@ -45,5 +47,23 @@ class ClientSender extends Thread {
 
             }
         }
+    }
+
+    void fileReadAndWrite(File file) {
+        try {
+            FileInputStream fis = new FileInputStream(file);
+
+            int writeByteNo;
+            byte[] writeBytes = new byte[4096];
+
+            while ((writeByteNo = fis.read(writeBytes)) != -1) {
+                out.write((Protocol.FILE + "|" + nickname + "|" + writeByteNo + "\n").getBytes());
+            }
+            out.flush();
+
+        } catch (Exception e) {
+            System.out.println();
+        }
+
     }
 }
