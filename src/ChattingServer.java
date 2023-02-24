@@ -118,12 +118,18 @@ public class ChattingServer {
         }
 
         void sendTo(String message) {
-            try {
-                out.write((message + "\n").getBytes());
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("ChattingServer의 Client의 sendTo에서 문제 발생!!");
-            }
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        out.write((message + "\n").getBytes());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("ChattingServer의 Client의 sendTo에서 문제 발생!!");
+                    }
+                }
+            };
+            executorService.submit(runnable);
         }
 
         void sendAll(String message) {
