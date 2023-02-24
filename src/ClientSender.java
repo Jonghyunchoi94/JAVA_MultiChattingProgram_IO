@@ -21,8 +21,17 @@ class ClientSender extends Thread {
             Scanner scanner = new Scanner(System.in);
             try {
                 String message = scanner.nextLine();
-
-                File file = new File(message);
+//                String[] messageSplit = message.split("\\.");
+//                String extension = messageSplit[messageSplit.length - 1].toLowerCase();
+//
+//                if (FileExtension.EXTENSION.contains(extension)) {
+//                    File file = new File(message);
+//
+//                    if (file.exists() && file.isFile()) {
+//                        out.write((Protocol.FILE + "|" + nickname + "|" + message + "\n").getBytes());
+//                    }
+//
+//                }
 
                 out.write((Protocol.MESSAGE + "|" + nickname + "|" + message + "\n").getBytes());
             } catch (Exception e) {
