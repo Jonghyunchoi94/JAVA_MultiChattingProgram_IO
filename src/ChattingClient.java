@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.StringTokenizer;
 
 public class ChattingClient {
     public static void main(String[] args) {

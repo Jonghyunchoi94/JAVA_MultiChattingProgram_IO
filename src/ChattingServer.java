@@ -69,7 +69,6 @@ public class ChattingServer {
         Socket socket;
         BufferedReader in;
         OutputStream out;
-        String nickname, message;
         Client(Socket socket) {
             this.socket = socket;
 
@@ -91,16 +90,17 @@ public class ChattingServer {
 
                             switch (protocol) {
                                 case Protocol.LOGINREQUEST:
-                                    nickname = st.nextToken();
+                                    String loginNickname = st.nextToken();
                                     connections.add(Client.this);
                                     sendTo(Protocol.LOGINACCEPT + "|" + "닉네임이 성공적으로 생성되었습니다!!");
-                                    sendAll(Protocol.CONNECTION + "|" + nickname + "님이 입장하셨습니다.");
+                                    sendAll(Protocol.CONNECTION + "|" + loginNickname + "님이 입장하셨습니다.");
                                     sendAll(Protocol.CONNECTION + "|" + "현재 인원은 " + connections.size() + "명입니다.");
 
                                     break;
                                 case Protocol.MESSAGE:
-                                    message = st.nextToken();
-                                    sendAll(Protocol.MESSAGE + "|" +  message);
+                                    String messageNickname = st.nextToken();
+                                    String message = st.nextToken();
+                                    sendAll(Protocol.MESSAGE + "|" + messageNickname + "|" + message);
                                     break;
                                 case Protocol.FILE:
                                     break;

@@ -26,9 +26,13 @@ class ClientReceiver extends Thread {
                 switch (protocol) {
                     case Protocol.LOGINACCEPT:
                     case Protocol.CONNECTION:
+                        String loginMessage = st.nextToken();
+                        System.out.println(loginMessage);
+                        break;
                     case Protocol.MESSAGE:
+                        String messageNickname = st.nextToken();
                         String message = st.nextToken();
-                        System.out.println(message);
+                        System.out.println(messageNickname + ": " + message);
                         break;
                 }
 
