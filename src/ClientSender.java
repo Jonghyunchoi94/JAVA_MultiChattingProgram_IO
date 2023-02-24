@@ -29,7 +29,12 @@ class ClientSender extends Thread {
                     File file = new File(message);
 
                     if (file.exists() && file.isFile()) {
-                        fileReadAndWrite(file);
+                        String[] fileNameSplit = message.split("/");
+                        String fileName = fileNameSplit[fileNameSplit.length - 1];
+                        fileRead(fileName, file);
+                    }
+                    else {
+                        out.write((Protocol.MESSAGE + "|" + nickname + "|" + message + "\n").getBytes());
                     }
 
                 } else {
@@ -49,20 +54,17 @@ class ClientSender extends Thread {
         }
     }
 
-    void fileReadAndWrite(File file) {
+    synchronized void fileRead(String fileName, File file) {
         try {
             FileInputStream fis = new FileInputStream(file);
-
-            int writeByteNo;
-            byte[] writeBytes = new byte[4096];
-
-            while ((writeByteNo = fis.read(writeBytes)) != -1) {
-                out.write((Protocol.FILE + "|" + nickname + "|" + writeByteNo + "\n").getBytes());
+            int data;
+            while ((data = fis.read()) != -1) {
+                out.write((Protocol.FILE + "|" + fileName + "|" + data + "\n").getBytes());
             }
             out.flush();
 
         } catch (Exception e) {
-            System.out.println();
+            System.out.println("ClientSender의 fileRead에서 문제 발생!!");
         }
 
     }
