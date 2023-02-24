@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
@@ -20,6 +17,7 @@ class ClientReceiver extends Thread {
         while (in != null) {
             try {
                 String data = in.readLine();
+                System.out.println(data);
                 StringTokenizer st = new StringTokenizer(data, "|");
                 int protocol = Integer.parseInt(st.nextToken());
 
@@ -34,6 +32,11 @@ class ClientReceiver extends Thread {
                         String message = st.nextToken();
                         System.out.println(messageNickname + ": " + message);
                         break;
+                    case Protocol.FILE:
+                        String filename = st.nextToken();
+                        String fileContent = st.nextToken();
+                        fileWrite(filename, fileContent);
+                        break;
                 }
 
             } catch (Exception e) {
@@ -46,5 +49,19 @@ class ClientReceiver extends Thread {
                 }
             }
         }
+    }
+    synchronized void fileWrite(String filename, String fileContent) {
+        try {
+            File file = new File(filePath + File.separator + filename);
+            FileOutputStream fos = new FileOutputStream(file,true);
+
+            fos.write(Integer.parseInt(fileContent));
+
+        } catch (Exception e) {
+            System.out.println("ClientReceiver의 fileWrite에서 문제 발생!!");
+        }
+
+
+
     }
 }
